@@ -10,10 +10,6 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     
-    env:
-      # Fix the Node.js 20 deprecation warning shown in the error image
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
@@ -22,6 +18,7 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
+        cache: 'pip'
 
     - name: Install Dependencies
       run: |
@@ -47,7 +44,14 @@ jobs:
         make test
         cd ..
 
+    - name: Verify JIT and Environment
+      run: |
+        # Quick diagnostic check
+        PYTHONPATH=. python -c "from jit_layer.jit_stub import jit_engine; print(f'JIT Available: {jit_engine.available}'); print(f'JIT Status: {jit_engine.status()}')"
+        PYTHONPATH=. python -c "from python_layer.bridge import _lib; print(f'C Engine Loaded: {_lib is not None}')"
+
     - name: Run Integration Tests
       run: |
-        # Use PYTHONPATH to ensure imports work correctly in CI
-        PYTHONPATH=. python -m pytest tests/test_engine.py -v -s
+        # Ensure libengine.so can be found (Linux uses .so)
+        # We set PYTHONPATH to include the project root
+        PYTHONPATH=. pytest tests/test_engine.py -v -s

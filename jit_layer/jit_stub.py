@@ -135,8 +135,7 @@ class JITEngine:
                 if node.is_Pow:
                     base = emit_ir(node.args[0])
                     exponent = emit_ir(node.args[1])
-                    # For pow, we need to call external math function
-                    # We'll use the llvm.pow.f64 intrinsic or call libm pow
+                    # Use explicit llvm.pow.f64 for double precision
                     pow_f = builder.module.declare_intrinsic('llvm.pow', [double])
                     return builder.call(pow_f, [base, exponent])
                 if isinstance(node, sp.sin):
@@ -181,7 +180,10 @@ class JITEngine:
             # llvm.initialize()  # Deprecated
             llvm.initialize_native_target()
             llvm.initialize_native_asmprinter()
-            llvm.initialize_native_asmparser()  # Added for better Linux compatibility
+            llvm.initialize_native_asmparser()
+            # Also initialize all for maximum compatibility in various environments
+            llvm.initialize_all_targets()
+            llvm.initialize_all_asmprinters()
             target = llvm.Target.from_default_triple()
             tm = target.create_target_machine()
             mod = llvm.parse_assembly(str(module))
