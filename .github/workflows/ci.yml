@@ -1,0 +1,49 @@
+name: SINGULARITY ENGINE CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install sympy llvmlite pytest
+
+    - name: Set up GCC
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential
+
+    - name: Build C Engine
+      run: |
+        cd core_c
+        make clean
+        make
+        cd ..
+
+    - name: Run C Self-Tests
+      run: |
+        cd core_c
+        make test
+        cd ..
+
+    - name: Run Integration Tests
+      run: |
+        # Ensure libengine.so can be found (Linux uses .so)
+        # The bridge.py expects libengine.so in core_c/
+        python -m pytest tests/test_engine.py -v

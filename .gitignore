@@ -1,0 +1,20 @@
+# Compiled C objects
+*.o
+*.so
+*.dll
+*.dylib
+core_c/engine_test
+core_c/libengine.so
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+env/
+venv/
+
+# Documentation artefacts
+singularity_engine_documentary.pdf
+MASTER-PROMPT--SINGULARITY_ENGINE.txt
