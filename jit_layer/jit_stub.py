@@ -46,10 +46,30 @@ class JITEngine:
     def __init__(self) -> None:
         self._available: bool = self._check_llvmlite()
         self._cache: dict[str, JITFunc] = {}
+        if self._available:
+            self._init_llvm()
 
     # ------------------------------------------------------------------
-    # Availability check
+    # Availability & Initialization
     # ------------------------------------------------------------------
+
+    @staticmethod
+    def _init_llvm() -> None:
+        """Initialize LLVM components once."""
+        try:
+            import llvmlite.binding as llvm
+            # For maximum compatibility across Ubuntu runners and other Linux flavors
+            llvm.initialize()
+            llvm.initialize_native_target()
+            llvm.initialize_native_asmprinter()
+            llvm.initialize_native_asmparser()
+            llvm.initialize_all_targets()
+            llvm.initialize_all_asmprinters()
+            logger.debug("[JIT] LLVM native targets initialized.")
+        except Exception as exc:
+            # We ignore deprecation warnings but log hard errors
+            if "deprecated" not in str(exc).lower():
+                logger.warning("[JIT] Failed to initialize LLVM targets: %s", exc)
 
     @staticmethod
     def _check_llvmlite() -> bool:
