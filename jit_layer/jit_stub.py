@@ -171,9 +171,9 @@ class JITEngine:
             builder.ret(result)
 
             # 3. Compile IR -> machine code
-            llvm.initialize()
             llvm.initialize_native_target()
             llvm.initialize_native_asmprinter()
+            llvm.initialize_native_asmparser()
             
             # Create a target machine representing the host
             target = llvm.Target.from_default_triple()
