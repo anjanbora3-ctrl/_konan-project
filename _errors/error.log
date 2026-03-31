@@ -1,0 +1,124 @@
+Annotations
+1 error and 1 warning
+build-and-test
+failed 1 minute ago in 27s
+Search logs
+1s
+1s
+0s
+9s
+13s
+1s
+0s
+0s
+1s
+Run # Ensure libengine.so can be found (Linux uses .so)
+  # Ensure libengine.so can be found (Linux uses .so)
+  # We set PYTHONPATH to include the project root
+  export PYTHONPATH=$PYTHONPATH:.
+  pytest tests/test_engine.py -v -s
+  shell: /usr/bin/bash -e {0}
+  env:
+    FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+    PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+    Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+    Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+    Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+    LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.0.2, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.11.15/x64/bin/python
+cachedir: .pytest_cache
+rootdir: /home/runner/work/_konan-project/_konan-project
+collecting ... collected 6 items
+
+Traceback (most recent call last):
+  File "/home/runner/work/_konan-project/_konan-project/jit_layer/jit_stub.py", line 198, in compile
+    target = llvm.Target.from_default_triple()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/llvmlite/binding/targets.py", line 212, in from_default_triple
+    return cls.from_triple(triple)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/llvmlite/binding/targets.py", line 223, in from_triple
+    raise RuntimeError(str(outerr))
+RuntimeError: Unable to find target for this triple (no targets are registered)
+tests/test_engine.py::TestSingularityEngine::test_c_engine_basic PASSED
+Traceback (most recent call last):
+  File "/home/runner/work/_konan-project/_konan-project/jit_layer/jit_stub.py", line 198, in compile
+    target = llvm.Target.from_default_triple()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/llvmlite/binding/targets.py", line 212, in from_default_triple
+    return cls.from_triple(triple)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/llvmlite/binding/targets.py", line 223, in from_triple
+    raise RuntimeError(str(outerr))
+RuntimeError: Unable to find target for this triple (no targets are registered)
+Traceback (most recent call last):
+  File "/home/runner/work/_konan-project/_konan-project/jit_layer/jit_stub.py", line 198, in compile
+    target = llvm.Target.from_default_triple()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/llvmlite/binding/targets.py", line 212, in from_default_triple
+    return cls.from_triple(triple)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/llvmlite/binding/targets.py", line 223, in from_triple
+    raise RuntimeError(str(outerr))
+RuntimeError: Unable to find target for this triple (no targets are registered)
+tests/test_engine.py::TestSingularityEngine::test_c_engine_functions PASSED
+Traceback (most recent call last):
+  File "/home/runner/work/_konan-project/_konan-project/jit_layer/jit_stub.py", line 198, in compile
+    target = llvm.Target.from_default_triple()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/llvmlite/binding/targets.py", line 212, in from_default_triple
+    return cls.from_triple(triple)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/llvmlite/binding/targets.py", line 223, in from_triple
+    raise RuntimeError(str(outerr))
+RuntimeError: Unable to find target for this triple (no targets are registered)
+Traceback (most recent call last):
+  File "/home/runner/work/_konan-project/_konan-project/jit_layer/jit_stub.py", line 198, in compile
+    target = llvm.Target.from_default_triple()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/llvmlite/binding/targets.py", line 212, in from_default_triple
+    return cls.from_triple(triple)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/llvmlite/binding/targets.py", line 223, in from_triple
+    raise RuntimeError(str(outerr))
+RuntimeError: Unable to find target for this triple (no targets are registered)
+tests/test_engine.py::TestSingularityEngine::test_cache PASSED
+Traceback (most recent call last):
+  File "/home/runner/work/_konan-project/_konan-project/jit_layer/jit_stub.py", line 198, in compile
+    target = llvm.Target.from_default_triple()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/llvmlite/binding/targets.py", line 212, in from_default_triple
+    return cls.from_triple(triple)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/llvmlite/binding/targets.py", line 223, in from_triple
+    raise RuntimeError(str(outerr))
+RuntimeError: Unable to find target for this triple (no targets are registered)
+tests/test_engine.py::TestSingularityEngine::test_jit_compilation FAILED
+tests/test_engine.py::TestSingularityEngine::test_symbolic_diff PASSED
+tests/test_engine.py::TestSingularityEngine::test_symbolic_simplify PASSED
+
+=================================== FAILURES ===================================
+__________________ TestSingularityEngine.test_jit_compilation __________________
+
+self = <test_engine.TestSingularityEngine testMethod=test_jit_compilation>
+
+    def test_jit_compilation(self):
+        """Test if JIT compiles and executes correctly"""
+        expr = "x^2 + 10"
+        # First call triggers compilation
+        res1 = evaluate(2.0, expr=expr)
+        self.assertEqual(res1, 14.0)
+    
+        status = jit_status()
+>       self.assertIn(expr, status['expressions'], f"JIT failed to compile {expr}. Status: {status}")
+E       AssertionError: 'x^2 + 10' not found in [] : JIT failed to compile x^2 + 10. Status: {'backend': 'llvmlite/LLVM', 'compiled': 0, 'expressions': []}
+
+tests/test_engine.py:43: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  jit_layer.jit_stub:jit_stub.py:224 [JIT] Failed to compile 'x^2 + 10': Unable to find target for this triple (no targets are registered)
+=========================== short test summary info ============================
+FAILED tests/test_engine.py::TestSingularityEngine::test_jit_compilation - AssertionError: 'x^2 + 10' not found in [] : JIT failed to compile x^2 + 10. Status: {'backend': 'llvmlite/LLVM', 'compiled': 0, 'expressions': []}
+========================= 1 failed, 5 passed in 0.39s ==========================
+Error: Process completed with exit code 1.
