@@ -171,18 +171,17 @@ class JITEngine:
             builder.ret(result)
 
             # 3. Compile IR -> machine code
-            llvm.initialize_native_target()
-            llvm.initialize_native_asmprinter()
-            llvm.initialize_native_asmparser()
-            
+            # Note: llvmlite 0.43+ handles initialization automatically.
+            # Manual calls to llvm.initialize() are deprecated and cause errors in CI.
+
             # Create a target machine representing the host
             target = llvm.Target.from_default_triple()
             target_machine = target.create_target_machine()
-            
+
             # Parse the assembly
             llmod = llvm.parse_assembly(str(module))
             llmod.verify()
-            
+
             # Create an execution engine
             engine = llvm.create_mcjit_compiler(llmod, target_machine)
             engine.finalize_object()
@@ -192,9 +191,10 @@ class JITEngine:
             import ctypes
             fptr = engine.get_function_address("eval_jit")
             cfunc = ctypes.CFUNCTYPE(ctypes.c_double, ctypes.c_double)(fptr)
-            
-            # Prevent GC from reclaiming the engine/module
+
+            # Prevent GC from reclaiming the engine and module
             cfunc._jit_engine = engine
+            cfunc._jit_module = llmod
 
             self._cache[expr_str] = cfunc
             logger.info("[JIT] Successfully compiled '%s'", expr_str)

@@ -40,7 +40,7 @@ class TestSingularityEngine(unittest.TestCase):
         self.assertEqual(res1, 14.0)
         
         status = jit_status()
-        self.assertIn(expr, status['expressions'])
+        self.assertIn(expr, status['expressions'], f"JIT failed to compile {expr}. Status: {status}")
         
         # Second call uses JIT
         res2 = evaluate(3.0, expr=expr)

@@ -50,11 +50,9 @@ jobs:
 
     - name: Verify JIT and Environment
       run: |
-        # Quick diagnostic check
+        # Quick diagnostic check with logging enabled
         export PYTHONPATH=$PYTHONPATH:.
-        python -c "from jit_layer.jit_stub import jit_engine; print(f'JIT Available: {jit_engine.available}'); print(f'JIT Status: {jit_engine.status()}')"
-        # Force a test compilation to see any tracebacks
-        python -c "from jit_layer.jit_stub import jit_engine; jit_engine.compile('x^2 + 1')"
+        python -c "import logging; logging.basicConfig(level=logging.DEBUG); from jit_layer.jit_stub import jit_engine; jit_engine.compile('x^2 + 1'); print(f'JIT Status: {jit_engine.status()}')"
         python -c "from python_layer.bridge import _lib; print(f'C Engine Loaded: {_lib is not None}')"
 
     - name: Run Integration Tests
