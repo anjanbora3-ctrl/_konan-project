@@ -93,6 +93,7 @@ class JITEngine:
             import llvmlite.ir as ir
             import llvmlite.binding as llvm
             import sympy as sp
+            import traceback
             from sympy.parsing.sympy_parser import (
                 parse_expr,
                 standard_transformations,
@@ -135,7 +136,6 @@ class JITEngine:
                 if node.is_Pow:
                     base = emit_ir(node.args[0])
                     exponent = emit_ir(node.args[1])
-                    # Use explicit llvm.pow.f64 for double precision
                     pow_f = builder.module.declare_intrinsic('llvm.pow', [double])
                     return builder.call(pow_f, [base, exponent])
                 if isinstance(node, sp.sin):
@@ -159,16 +159,10 @@ class JITEngine:
                 if isinstance(node, sp.ceil):
                     ceil_f = builder.module.declare_intrinsic('llvm.ceil', [double])
                     return builder.call(ceil_f, [emit_ir(node.args[0])])
-                if isinstance(node, sp.round):
-                    # llvm.round.f64 rounds to nearest integer, ties away from zero
-                    round_f = builder.module.declare_intrinsic('llvm.round', [double])
-                    return builder.call(round_f, [emit_ir(node.args[0])])
                 if isinstance(node, sp.log10):
                     log10_f = builder.module.declare_intrinsic('llvm.log10', [double])
                     return builder.call(log10_f, [emit_ir(node.args[0])])
                 if node.is_Function:
-                    # Generic fallback for other functions would require more complex setup
-                    # For now, we only support a subset
                     raise ValueError(f"JIT does not yet support function: {node.func}")
                 raise ValueError(f"JIT does not yet support node type: {type(node)}")
 
@@ -176,22 +170,21 @@ class JITEngine:
             result = emit_ir(sym_expr)
             builder.ret(result)
 
-            # 3. Compile IR → machine code
-            # llvm.initialize()  # Deprecated
+            # 3. Compile IR -> machine code
+            llvm.initialize()
             llvm.initialize_native_target()
             llvm.initialize_native_asmprinter()
-            llvm.initialize_native_asmparser()
-            # Also initialize all for maximum compatibility in various environments
-            llvm.initialize_all_targets()
-            llvm.initialize_all_asmprinters()
-            target = llvm.Target.from_default_triple()
-            tm = target.create_target_machine()
-            mod = llvm.parse_assembly(str(module))
-            mod.verify()
             
-            # Create execution engine
-            backing_mod = llvm.parse_bitcode(mod.as_bitcode())
-            engine = llvm.create_mcjit_compiler(backing_mod, tm)
+            # Create a target machine representing the host
+            target = llvm.Target.from_default_triple()
+            target_machine = target.create_target_machine()
+            
+            # Parse the assembly
+            llmod = llvm.parse_assembly(str(module))
+            llmod.verify()
+            
+            # Create an execution engine
+            engine = llvm.create_mcjit_compiler(llmod, target_machine)
             engine.finalize_object()
             engine.run_static_constructors()
 
@@ -200,16 +193,16 @@ class JITEngine:
             fptr = engine.get_function_address("eval_jit")
             cfunc = ctypes.CFUNCTYPE(ctypes.c_double, ctypes.c_double)(fptr)
             
-            # Keep engine and module alive to avoid segfault
+            # Prevent GC from reclaiming the engine/module
             cfunc._jit_engine = engine
-            cfunc._jit_module = backing_mod
 
             self._cache[expr_str] = cfunc
-            logger.info("[JIT] Successfully compiled '%s' to native code.", expr_str)
+            logger.info("[JIT] Successfully compiled '%s'", expr_str)
             return cfunc
 
         except Exception as exc:
             logger.warning("[JIT] Failed to compile '%s': %s", expr_str, exc)
+            traceback.print_exc()
             return None
 
     # ------------------------------------------------------------------
