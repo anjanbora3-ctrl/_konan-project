@@ -58,12 +58,13 @@ class TestSingularityEngine(unittest.TestCase):
 
     def test_cache(self):
         """Test the LRU evaluation cache"""
-        set_expr("x + 1")
-        evaluate(10.0) # Miss
-        evaluate(10.0) # Hit
+        # Use a function JIT doesn't support (asin) to force C + EvalCache path
+        expr = "asin(x)"
+        evaluate(0.5, expr=expr) # Miss
+        evaluate(0.5, expr=expr) # Hit
         from python_layer.bridge import cache_stats
         stats = cache_stats()
-        self.assertGreaterEqual(stats['hits'], 1)
+        self.assertGreaterEqual(stats['hits'], 1, f"Cache hits should be >= 1. Stats: {stats}")
 
 if __name__ == '__main__':
     unittest.main()

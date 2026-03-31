@@ -1,0 +1,43 @@
+Run # Ensure libengine.so can be found (Linux uses .so)
+  # Ensure libengine.so can be found (Linux uses .so)
+  # We set PYTHONPATH to include the project root
+  export PYTHONPATH=$PYTHONPATH:.
+  pytest tests/test_engine.py -v -s
+  shell: /usr/bin/bash -e {0}
+  env:
+    FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+    PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+    Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+    Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+    Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+    LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+  
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.0.2, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.11.15/x64/bin/python
+cachedir: .pytest_cache
+rootdir: /home/runner/work/_konan-project/_konan-project
+collecting ... collected 6 items
+tests/test_engine.py::TestSingularityEngine::test_c_engine_basic PASSED
+tests/test_engine.py::TestSingularityEngine::test_c_engine_functions PASSED
+tests/test_engine.py::TestSingularityEngine::test_cache FAILED
+tests/test_engine.py::TestSingularityEngine::test_jit_compilation PASSED
+tests/test_engine.py::TestSingularityEngine::test_symbolic_diff PASSED
+tests/test_engine.py::TestSingularityEngine::test_symbolic_simplify PASSED
+=================================== FAILURES ===================================
+_______________________ TestSingularityEngine.test_cache _______________________
+self = <test_engine.TestSingularityEngine testMethod=test_cache>
+    def test_cache(self):
+        """Test the LRU evaluation cache"""
+        set_expr("x + 1")
+        evaluate(10.0) # Miss
+        evaluate(10.0) # Hit
+        from python_layer.bridge import cache_stats
+        stats = cache_stats()
+>       self.assertGreaterEqual(stats['hits'], 1)
+E       AssertionError: 0 not greater than or equal to 1
+tests/test_engine.py:66: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_engine.py::TestSingularityEngine::test_cache - AssertionError: 0 not greater than or equal to 1
+========================= 1 failed, 5 passed in 0.48s ==========================
+Error: Process completed with exit code 1.
