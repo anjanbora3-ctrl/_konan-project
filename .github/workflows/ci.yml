@@ -9,6 +9,10 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    
+    env:
+      # Fix the Node.js 20 deprecation warning shown in the error image
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
     - name: Checkout Repository
@@ -22,7 +26,7 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install sympy llvmlite pytest
+        pip install sympy==1.14.0 llvmlite==0.46.0 pytest
 
     - name: Set up GCC
       run: |
@@ -32,8 +36,9 @@ jobs:
     - name: Build C Engine
       run: |
         cd core_c
-        make clean
+        make clean || true
         make
+        ls -lh libengine.so
         cd ..
 
     - name: Run C Self-Tests
@@ -44,6 +49,5 @@ jobs:
 
     - name: Run Integration Tests
       run: |
-        # Ensure libengine.so can be found (Linux uses .so)
-        # The bridge.py expects libengine.so in core_c/
-        python -m pytest tests/test_engine.py -v
+        # Use PYTHONPATH to ensure imports work correctly in CI
+        PYTHONPATH=. python -m pytest tests/test_engine.py -v -s

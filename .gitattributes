@@ -1,0 +1,6 @@
+# Ensure Makefiles and C code use LF in Git and on checkout (crucial for Linux CI)
+core_c/Makefile text eol=lf
+core_c/*.c text eol=lf
+core_c/*.h text eol=lf
+*.py text eol=lf
+.github/workflows/*.yml text eol=lf

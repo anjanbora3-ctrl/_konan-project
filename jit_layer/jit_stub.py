@@ -181,6 +181,7 @@ class JITEngine:
             # llvm.initialize()  # Deprecated
             llvm.initialize_native_target()
             llvm.initialize_native_asmprinter()
+            llvm.initialize_native_asmparser()  # Added for better Linux compatibility
             target = llvm.Target.from_default_triple()
             tm = target.create_target_machine()
             mod = llvm.parse_assembly(str(module))
